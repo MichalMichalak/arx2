@@ -1,12 +1,10 @@
 package conf
 
 import (
-	"github.com/unravelin/core/arx2/log"
 	"strings"
 )
 
 type DefaultResolver struct {
-	logger  log.Logger
 	loaders []genericLoader
 }
 
@@ -14,7 +12,7 @@ type DefaultResolver struct {
 // command line arguments.
 //
 // Source priority, starting from the lowest: Shell environment; YAML files, in order provided; Command line arguments.
-func NewResolver(logger log.Logger, paths []string) DefaultResolver {
+func NewResolver(paths []string) DefaultResolver {
 	loaders := []genericLoader{newEnvLoader()}
 	for _, p := range paths {
 		loaders = append(loaders, newYamlLoader(p))
@@ -23,7 +21,7 @@ func NewResolver(logger log.Logger, paths []string) DefaultResolver {
 	for _, l := range loaders {
 		l.load()
 	}
-	return DefaultResolver{logger: logger, loaders: loaders}
+	return DefaultResolver{loaders: loaders}
 }
 
 func (r DefaultResolver) Conf() map[string]interface{} {

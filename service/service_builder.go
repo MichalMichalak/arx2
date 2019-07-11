@@ -1,8 +1,8 @@
 package service
 
 import (
+	"github.com/MichalMichalak/arx2/log"
 	"github.com/pkg/errors"
-	"github.com/unravelin/core/arx2/log"
 )
 
 // Set logger before anything else

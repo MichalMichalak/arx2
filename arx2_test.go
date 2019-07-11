@@ -1,10 +1,10 @@
 package arx2_test
 
 import (
+	"github.com/MichalMichalak/arx2/log"
+	"github.com/MichalMichalak/arx2/provider"
+	"github.com/MichalMichalak/arx2/service"
 	"github.com/stretchr/testify/require"
-	"github.com/unravelin/core/arx2/log"
-	"github.com/unravelin/core/arx2/provider"
-	"github.com/unravelin/core/arx2/service"
 	"sync"
 	"testing"
 	"time"

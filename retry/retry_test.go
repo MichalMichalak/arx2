@@ -3,9 +3,9 @@ package retry_test
 import (
 	"errors"
 	"fmt"
+	"github.com/MichalMichalak/arx2/retry"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/unravelin/core/arx2/retry"
 	"testing"
 )
 

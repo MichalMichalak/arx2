@@ -1,9 +1,9 @@
 package provider
 
 import (
-	"github.com/unravelin/core/arx2/conf"
-	"github.com/unravelin/core/arx2/log"
-	"github.com/unravelin/core/arx2/service"
+	"github.com/MichalMichalak/arx2/conf"
+	"github.com/MichalMichalak/arx2/log"
+	"github.com/MichalMichalak/arx2/service"
 	"time"
 )
 

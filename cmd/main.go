@@ -2,14 +2,12 @@ package main
 
 import (
 	"fmt"
+	"github.com/MichalMichalak/arx2/conf"
 	"github.com/davecgh/go-spew/spew"
-	"github.com/unravelin/core/arx2/conf"
-	"github.com/unravelin/core/arx2/log"
 )
 
 func main() {
-	logger := log.NewServiceLogger(log.SeverityDebug)
-	r := conf.NewResolver(logger, []string{"_temp/config.yaml"})
+	r := conf.NewResolver([]string{"_temp/config.yaml"})
 	c := r.Conf()
 	for k, v := range c {
 		fmt.Printf("conf[%s]=`%v`\n", k, v)

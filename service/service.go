@@ -1,9 +1,9 @@
 package service
 
 import (
+	"github.com/MichalMichalak/arx2/conf"
+	"github.com/MichalMichalak/arx2/log"
 	"github.com/pkg/errors"
-	"github.com/unravelin/core/arx2/conf"
-	"github.com/unravelin/core/arx2/log"
 	"sync"
 )
 
@@ -20,7 +20,7 @@ type Service struct {
 }
 
 func newService(name string, logger log.Logger, configPaths []string, providers map[string]Provider) (Service, error) {
-	confResolver := conf.NewResolver(logger, configPaths)
+	confResolver := conf.NewResolver(configPaths)
 	err := configureProviders(confResolver, providers)
 	if err != nil {
 		return Service{}, errors.Wrapf(err, "failed to initialize service `%s`", name)

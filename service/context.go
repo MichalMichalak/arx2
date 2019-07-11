@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/unravelin/core/arx2/log"
+	"github.com/MichalMichalak/arx2/log"
 )
 
 type Context interface {
