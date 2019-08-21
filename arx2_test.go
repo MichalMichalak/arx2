@@ -1,13 +1,15 @@
 package arx2_test
 
 import (
-	"github.com/MichalMichalak/arx2/log"
-	"github.com/MichalMichalak/arx2/provider"
-	"github.com/MichalMichalak/arx2/service"
-	"github.com/stretchr/testify/require"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/MichalMichalak/arx2/cnf"
+	"github.com/MichalMichalak/arx2/log"
+	"github.com/MichalMichalak/arx2/provider"
+	"github.com/MichalMichalak/arx2/svc"
+	"github.com/stretchr/testify/require"
 )
 
 func TestArx2(t *testing.T) {
@@ -17,7 +19,7 @@ func TestArx2(t *testing.T) {
 	p2 := provider.NewMyConsumer(numChan)
 	l := log.NewServiceLogger(log.SeverityDebug)
 
-	sb := &service.ServiceBuilder{}
+	sb := &svc.Builder{}
 	s, err := sb.Logger(l).Name("s1").Provider(p1).Provider(p2).ConfigPaths([]string{"../_temp/config.yaml"}).Build()
 	require.NoError(t, err)
 	require.NotNil(t, s)
@@ -29,6 +31,13 @@ func TestArx2(t *testing.T) {
 	wg.Wait()
 }
 
+func f1(s *svc.Service, t *testing.T, wg *sync.WaitGroup) {
+	time.Sleep(1 * time.Second)
+	err := s.Run()
+	require.NoError(t, err)
+	wg.Done()
+}
+
 func f2(numChan chan int, wg *sync.WaitGroup) {
 	time.Sleep(1 * time.Second)
 	for i := 1; i < 10; i++ {
@@ -38,23 +47,19 @@ func f2(numChan chan int, wg *sync.WaitGroup) {
 	wg.Done()
 }
 
-func f1(s *service.Service, t *testing.T, wg *sync.WaitGroup) {
-	time.Sleep(1 * time.Second)
-	err := s.Run()
-	require.NoError(t, err)
-	wg.Done()
-}
-
 func TestConsumer(t *testing.T) {
 	numChan := make(chan int)
 	p := provider.NewMyConsumer(numChan)
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 
-	ctx := service.NewServiceContext("s1", log.NewServiceLogger(log.SeverityDebug), map[string]service.Provider{})
+	logger := log.NewServiceLogger(log.SeverityDebug)
+	ctx := svc.NewServiceContext("s1", logger, map[string]svc.Provider{})
+	err := p.Configure(ctx, cnf.NewResolver(logger, nil))
+	require.NoError(t, err)
 
 	go func() {
-		err := p.Run(ctx)
+		err := p.Run()
 		require.NoError(t, err)
 		wg.Done()
 	}()

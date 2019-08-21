@@ -1,4 +1,4 @@
-package service
+package svc
 
 type Status string
 

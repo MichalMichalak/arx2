@@ -36,6 +36,7 @@ func (sl ServiceLogger) Log(severity Severity, v ...interface{}) {
 	fmt.Printf("[" + now + "][" + string(severity) + "] ")
 	fmt.Print(v...)
 	defer fmt.Print("\n")
+
 }
 
 func (sl ServiceLogger) Logf(severity Severity, format string, params ...interface{}) {

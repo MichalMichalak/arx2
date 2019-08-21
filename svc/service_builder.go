@@ -1,4 +1,4 @@
-package service
+package svc
 
 import (
 	"github.com/MichalMichalak/arx2/log"
@@ -6,7 +6,7 @@ import (
 )
 
 // Set logger before anything else
-type ServiceBuilder struct {
+type Builder struct {
 	name        string
 	logger      log.Logger
 	providers   map[string]Provider
@@ -14,7 +14,11 @@ type ServiceBuilder struct {
 	configPaths []string
 }
 
-func (sb *ServiceBuilder) validateLogger() {
+func NewBuilder() *Builder {
+	return &Builder{}
+}
+
+func (sb *Builder) validateLogger() {
 	if sb.logger != nil {
 		return
 	}
@@ -22,7 +26,7 @@ func (sb *ServiceBuilder) validateLogger() {
 	sb.logger.Warn("logger not defined, setting default one")
 }
 
-func (sb *ServiceBuilder) Name(name string) *ServiceBuilder {
+func (sb *Builder) Name(name string) *Builder {
 	// Pass through if error's already there
 	if sb.error != nil {
 		return sb
@@ -49,13 +53,13 @@ func (sb *ServiceBuilder) Name(name string) *ServiceBuilder {
 	return sb
 }
 
-func (sb *ServiceBuilder) Logger(logger log.Logger) *ServiceBuilder {
+func (sb *Builder) Logger(logger log.Logger) *Builder {
 	sb.logger = logger
 	logger.Debug("setting logger")
 	return sb
 }
 
-func (sb *ServiceBuilder) Provider(provider Provider) *ServiceBuilder {
+func (sb *Builder) Provider(provider Provider) *Builder {
 	// Pass through if error's already there
 	if sb.error != nil {
 		return sb
@@ -93,7 +97,7 @@ func (sb *ServiceBuilder) Provider(provider Provider) *ServiceBuilder {
 	return sb
 }
 
-func (sb *ServiceBuilder) ConfigPaths(paths []string) *ServiceBuilder {
+func (sb *Builder) ConfigPaths(paths []string) *Builder {
 	// Pass through if error's already there
 	if sb.error != nil {
 		return sb
@@ -106,7 +110,7 @@ func (sb *ServiceBuilder) ConfigPaths(paths []string) *ServiceBuilder {
 	return sb
 }
 
-func (sb *ServiceBuilder) Build() (*Service, error) {
+func (sb *Builder) Build() (*Service, error) {
 	// Validate logger
 	sb.validateLogger()
 
@@ -117,7 +121,7 @@ func (sb *ServiceBuilder) Build() (*Service, error) {
 
 	// Name
 	if sb.name == "" {
-		return nil, errors.Wrap(sb.error, "empty name")
+		return nil, errors.New("empty name")
 	}
 
 	// Providers

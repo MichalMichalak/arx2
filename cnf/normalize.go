@@ -1,4 +1,4 @@
-package conf
+package cnf
 
 import "strings"
 
@@ -6,8 +6,9 @@ import "strings"
 // empty string if can't be normalized.
 func normalizeEnvVarKey(s string) string {
 	// Although, technically valid env variable name may start with underscore, we're going to ignore such variables.
-	// We also do ignore names ending with underscore, as well as any name containing multiple underscores. Basically,
-	// we need a format like `WORD_word2_WORD3` case insensitive.
+	// We also do ignore names ending with underscore, as well as any name containing multiple underscores in a row.
+	// Basically, we need a format like `WORD_word2_WORD3` case insensitive.
+	///
 	// See for allowed chars:
 	// https://stackoverflow.com/questions/2821043/allowed-characters-in-linux-environment-variable-names
 	if strings.HasPrefix(s, "_") || strings.HasSuffix(s, "_") || strings.Contains(s, "__") {

@@ -8,9 +8,9 @@ import (
 type Retryer interface {
 	Retry(action Action) error
 
-	// WithRetry2 executes `action` multiple times until it succeeds or hit the failures limit and returns error.
-	// A `success` function is called to determine if action ended up successfuly (not all errors must always be
-	// treated as failure.)
+	// RetryWithSuccessCheck executes `action` multiple times until it succeeds or hit the failures limit and returns
+	// error. A `success` function is called to determine if action ended up successfully (not all errors must always
+	// be treated as failure.)
 	RetryWithSuccessCheck(action Action, check SuccessCheck) error
 }
 

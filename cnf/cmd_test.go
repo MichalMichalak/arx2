@@ -1,4 +1,4 @@
-package conf
+package cnf
 
 import (
 	"github.com/stretchr/testify/require"

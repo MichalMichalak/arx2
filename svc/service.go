@@ -1,17 +1,18 @@
-package service
+package svc
 
 import (
-	"github.com/MichalMichalak/arx2/conf"
+	"sync"
+
+	"github.com/MichalMichalak/arx2/cnf"
 	"github.com/MichalMichalak/arx2/log"
 	"github.com/pkg/errors"
-	"sync"
 )
 
 type Provider interface {
 	Name() string
-	Run(ctx Context) error
+	Run() error
 	ShutdownRequest()
-	Configure(resolver conf.Resolver) error
+	Configure(ctx Context, resolver cnf.Resolver) error
 }
 
 type Service struct {
@@ -20,18 +21,18 @@ type Service struct {
 }
 
 func newService(name string, logger log.Logger, configPaths []string, providers map[string]Provider) (Service, error) {
-	confResolver := conf.NewResolver(configPaths)
-	err := configureProviders(confResolver, providers)
+	context := NewServiceContext(name, logger, providers)
+	confResolver := cnf.NewResolver(logger, configPaths)
+	err := configureProviders(context, confResolver, providers)
 	if err != nil {
 		return Service{}, errors.Wrapf(err, "failed to initialize service `%s`", name)
 	}
-	context := NewServiceContext(name, logger, providers)
 	return Service{context: context, status: Created}, nil
 }
 
-func configureProviders(resolver conf.Resolver, providers map[string]Provider) error {
+func configureProviders(context Context, resolver cnf.Resolver, providers map[string]Provider) error {
 	for name, provider := range providers {
-		err := provider.Configure(resolver)
+		err := provider.Configure(context, resolver)
 		if err != nil {
 			return errors.Wrapf(err, "failed to configure provider `%s`", name)
 		}
@@ -49,7 +50,7 @@ func (s Service) Run() error {
 	providers := s.context.Providers()
 	wg.Add(len(providers))
 	for _, p := range providers {
-		go runProvider(s.context, p, &wg)
+		go runProvider(p, &wg)
 	}
 	wg.Wait()
 	return nil
@@ -72,11 +73,12 @@ func shutdownProvider(p Provider, wg *sync.WaitGroup) {
 	wg.Done()
 }
 
-func runProvider(c Context, p Provider, wg *sync.WaitGroup) {
-	err := p.Run(c)
+func runProvider(p Provider, wg *sync.WaitGroup) {
+	err := p.Run()
 	if err != nil {
 		err = errors.Wrapf(err, "[%s] execution interrupted", p.Name())
 		panic(err)
+		// TODO find better way to handle error
 	}
 	wg.Done()
 }

@@ -1,0 +1,3 @@
+nsq.consumer:
+  topic: abc
+  host: 127.0.0.1:4150

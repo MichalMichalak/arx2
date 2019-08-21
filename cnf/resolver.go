@@ -1,7 +1,9 @@
-package conf
+package cnf
 
 import (
 	"strings"
+
+	"github.com/MichalMichalak/arx2/log"
 )
 
 type DefaultResolver struct {
@@ -12,7 +14,7 @@ type DefaultResolver struct {
 // command line arguments.
 //
 // Source priority, starting from the lowest: Shell environment; YAML files, in order provided; Command line arguments.
-func NewResolver(paths []string) DefaultResolver {
+func NewResolver(logger log.Logger, paths []string) DefaultResolver {
 	loaders := []genericLoader{newEnvLoader()}
 	for _, p := range paths {
 		loaders = append(loaders, newYamlLoader(p))
@@ -20,6 +22,9 @@ func NewResolver(paths []string) DefaultResolver {
 	loaders = append(loaders, newCmdLoader())
 	for _, l := range loaders {
 		l.load()
+		if len(l.warns()) > 0 {
+			logger.Warn(strings.Join(l.warns(), ": "))
+		}
 	}
 	return DefaultResolver{loaders: loaders}
 }

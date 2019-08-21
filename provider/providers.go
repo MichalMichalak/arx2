@@ -1,12 +1,16 @@
 package provider
 
 import (
-	"github.com/MichalMichalak/arx2/conf"
-	"github.com/MichalMichalak/arx2/log"
-	"github.com/MichalMichalak/arx2/service"
 	"time"
+
+	"github.com/MichalMichalak/arx2/cnf"
+	"github.com/MichalMichalak/arx2/log"
+	"github.com/MichalMichalak/arx2/svc"
 )
 
+// --------------------
+// Provider for testing
+// --------------------
 type MyDoer struct {
 	name   string
 	logger log.Logger
@@ -18,8 +22,7 @@ func NewMyDoer() *MyDoer {
 
 func (mp *MyDoer) Name() string { return mp.name }
 
-func (mp *MyDoer) Run(ctx service.Context) error {
-	mp.logger = ctx.Logger()
+func (mp *MyDoer) Run() error {
 	mp.logger.Log(log.SeverityDebug, mp.name+" - Run")
 	defer mp.logger.Log(log.SeverityDebug, mp.name+" - Run complete")
 	return nil
@@ -34,12 +37,14 @@ func (mp *MyDoer) ShutdownRequest() {
 	defer mp.logger.Log(log.SeverityInfo, mp.name+" - ShutdownRequest complete")
 }
 
-func (mp *MyDoer) Configure(resolver conf.Resolver) error {
+func (mp *MyDoer) Configure(ctx svc.Context, resolver cnf.Resolver) error {
+	mp.logger = ctx.Logger()
 	return nil
 }
 
-// #############
-
+// --------------------
+// Provider for testing
+// --------------------
 type myConsConf struct {
 	Topic string `conf:"some.fake.topic"`
 }
@@ -57,8 +62,7 @@ func NewMyConsumer(numberChannel chan int) *MyConsumer {
 
 func (mc *MyConsumer) Name() string { return mc.name }
 
-func (mc *MyConsumer) Run(ctx service.Context) error {
-	mc.logger = ctx.Logger()
+func (mc *MyConsumer) Run() error {
 	mc.logger.Infof("Config %+v", mc.conf)
 	mc.logger.Debug("run")
 	for {
@@ -81,10 +85,7 @@ func (mc *MyConsumer) ShutdownRequest() {
 	mc.logger.Warnf("%s shutdown", mc.name)
 }
 
-func (mc *MyConsumer) Configure(resolver conf.Resolver) error {
-	err := conf.Configure(&mc.conf, resolver)
-	if err != nil {
-		return err
-	}
-	return nil
+func (mc *MyConsumer) Configure(ctx svc.Context, resolver cnf.Resolver) error {
+	mc.logger = ctx.Logger()
+	return cnf.Configure(&mc.conf, resolver)
 }
