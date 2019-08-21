@@ -97,7 +97,7 @@ func (sb *Builder) Provider(provider Provider) *Builder {
 	return sb
 }
 
-func (sb *Builder) ConfigPaths(paths []string) *Builder {
+func (sb *Builder) ConfigPath(path string) *Builder {
 	// Pass through if error's already there
 	if sb.error != nil {
 		return sb
@@ -106,7 +106,7 @@ func (sb *Builder) ConfigPaths(paths []string) *Builder {
 	// Validate logger
 	sb.validateLogger()
 
-	sb.configPaths = paths
+	sb.configPaths = append(sb.configPaths, path)
 	return sb
 }
 

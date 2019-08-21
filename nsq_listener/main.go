@@ -13,7 +13,7 @@ func main() {
 	service, err := svc.NewBuilder().
 		Logger(logger).
 		Name("svc-1").
-		ConfigPaths([]string{"config/nsq-test.yaml"}).
+		ConfigPath("config/nsq-test.yaml").
 		Provider(cons).
 		Build()
 	if err != nil {

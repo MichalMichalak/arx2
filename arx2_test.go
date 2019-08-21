@@ -19,7 +19,7 @@ func TestArx2(t *testing.T) {
 	p2 := provider.NewMyConsumer(numChan)
 	l := log.NewServiceLogger(log.SeverityDebug)
 
-	s, err := svc.NewBuilder().Logger(l).Name("s1").Provider(p1).Provider(p2).ConfigPaths([]string{"../_temp/config.yaml"}).Build()
+	s, err := svc.NewBuilder().Logger(l).Name("s1").Provider(p1).Provider(p2).ConfigPath("_temp/config.yaml").Build()
 	require.NoError(t, err)
 	require.NotNil(t, s)
 
@@ -54,7 +54,7 @@ func TestConsumer(t *testing.T) {
 
 	logger := log.NewServiceLogger(log.SeverityDebug)
 	ctx := svc.NewServiceContext("s1", logger, map[string]svc.Provider{})
-	err := p.Configure(ctx, cnf.NewResolver(logger, nil))
+	err := p.Configure(ctx, cnf.NewResolver(logger, []string{"_temp/config.yaml"}))
 	require.NoError(t, err)
 
 	go func() {
