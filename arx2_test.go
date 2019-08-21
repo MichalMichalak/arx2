@@ -19,8 +19,7 @@ func TestArx2(t *testing.T) {
 	p2 := provider.NewMyConsumer(numChan)
 	l := log.NewServiceLogger(log.SeverityDebug)
 
-	sb := &svc.Builder{}
-	s, err := sb.Logger(l).Name("s1").Provider(p1).Provider(p2).ConfigPaths([]string{"../_temp/config.yaml"}).Build()
+	s, err := svc.NewBuilder().Logger(l).Name("s1").Provider(p1).Provider(p2).ConfigPaths([]string{"../_temp/config.yaml"}).Build()
 	require.NoError(t, err)
 	require.NotNil(t, s)
 
